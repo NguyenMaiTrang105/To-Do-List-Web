@@ -6,7 +6,7 @@ import "./App.css";
 // js thuần thì sẽ điều khiển browser trực tiếp qua DOM
 function Todo({ input, setInput, onAdd }) {
   return (
-    <>
+    <div className="input-box">
       <input
         className="todo-input"
         type="text"
@@ -16,7 +16,28 @@ function Todo({ input, setInput, onAdd }) {
         onKeyDown={(e) => e.key === "Enter" && onAdd()}
       />
       <button onClick={onAdd}>Add</button>
-    </>
+    </div>
+  );
+}
+function TodoItem({ todo, onToggle, onDelete }) {
+  return (
+    <div className="todo-item">
+      <li className="li">
+        <input
+          type="checkbox"
+          checked={todo.completed}
+          onChange={() => onToggle(todo.id)}
+        />
+        <span
+          className="todo-text"
+          style={{ textDecoration: todo.completed ? "line-through" : "none" }}
+        >
+          {todo.text}
+        </span>
+
+        <button onClick={() => onDelete(todo.id)}>X</button>
+      </li>
+    </div>
   );
 }
 function App() {
@@ -24,6 +45,7 @@ function App() {
   const [list, setList] = useState(() => {
     return JSON.parse(localStorage.getItem("todos")) || [];
   });
+  const counter = list.filter((todo) => todo.completed === false).length;
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(list));
   }, [list]);
@@ -44,42 +66,30 @@ function App() {
   function handleDeleteTodo(id) {
     setList(list.filter((todo) => todo.id !== id));
   }
+  function handleToggleTodo(id) {
+    setList(
+      list.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  }
+
   return (
-    <>
+    <div className="app">
       <h1>To do with me</h1>
+      <p>Tasks left: {counter}</p>
       <Todo input={input} setInput={setInput} onAdd={handleAddTodo} />
       <ul>
         {list.map((item) => (
-          <li
-            className="li"
+          <TodoItem
             key={item.id}
-            style={{ textDecoration: item.completed ? "line-through" : "none" }}
-          >
-            <input
-              type="checkbox"
-              checked={item.completed}
-              onChange={() =>
-                setList(
-                  list.map((todo) =>
-                    todo.id === item.id
-                      ? { ...todo, completed: !todo.completed }
-                      : todo
-                  )
-                )
-              }
-            />
-            {item.text}
-            <button
-              onClick={() => {
-                handleDeleteTodo(item.id);
-              }}
-            >
-              X
-            </button>
-          </li>
+            todo={item}
+            onToggle={handleToggleTodo}
+            onDelete={handleDeleteTodo}
+          />
         ))}
       </ul>
-    </>
+    </div>
   );
 }
 export default App;

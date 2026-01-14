@@ -9,3 +9,23 @@
 .li {
   list-style: none;
 }
+.todo-item li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.todo-text {
+  flex: 0.6;
+}
+.todo-item {
+  margin: 10px 0;
+}
+.input-box {
+  display: flex;
+  gap: 10px;
+}
+.app {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
