@@ -12,6 +12,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #667eea, #e3bdda);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 h1 {
   font-size: 3.2em;
   line-height: 1.1;

@@ -4,47 +4,33 @@ import "./App.css";
 // nên cha phải đưa quyền cho con thông qua property
 // react tạo virtualDOM tả UI mới sau đó so sánh với virtual dom cũ và chỉ ra chỗ cần sửa
 // js thuần thì sẽ điều khiển browser trực tiếp qua DOM
-function Todo({ input, setInput, onAdd }) {
-  return (
-    <div className="input-box">
-      <input
-        className="todo-input"
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Enter a work"
-        onKeyDown={(e) => e.key === "Enter" && onAdd()}
-      />
-      <button onClick={onAdd}>Add</button>
-    </div>
-  );
-}
-function TodoItem({ todo, onToggle, onDelete }) {
-  return (
-    <div className="todo-item">
-      <li className="li">
-        <input
-          type="checkbox"
-          checked={todo.completed}
-          onChange={() => onToggle(todo.id)}
-        />
-        <span
-          className="todo-text"
-          style={{ textDecoration: todo.completed ? "line-through" : "none" }}
-        >
-          {todo.text}
-        </span>
-
-        <button onClick={() => onDelete(todo.id)}>X</button>
-      </li>
-    </div>
-  );
-}
+import Todo from "./Components/Todo";
+import TodoItem from "./Components/TodoItem";
+import Countdown from "./Components/Countdown";
 function App() {
   const [input, setInput] = useState("");
   const [list, setList] = useState(() => {
     return JSON.parse(localStorage.getItem("todos")) || [];
   });
+  const [time, setTime] = useState(1500);
+  const [state, setState] = useState(false);
+  const [customMinutes, setCustomMinutes] = useState(25);
+  useEffect(() => {
+    if (!state) return;
+    if (time === 0) {
+      setState(false);
+      return;
+    }
+    const id = setInterval(() => {
+      setTime((prev) => prev - 1);
+    }, 1000);
+    return () => {
+      clearInterval(id);
+    };
+  }, [state, time]);
+  function handleToggle() {
+    setState(!state);
+  }
   const counter = list.filter((todo) => todo.completed === false).length;
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(list));
@@ -77,6 +63,18 @@ function App() {
   return (
     <div className="app">
       <h1>To do with me</h1>
+      <Countdown
+        time={time}
+        isRunning={state}
+        customMinutes={customMinutes}
+        setCustomMinutes={setCustomMinutes}
+        onToggle={handleToggle}
+        onSetTime={() => {
+          setTime(customMinutes * 60);
+          setState(false);
+        }}
+      />
+
       <p>Tasks left: {counter}</p>
       <Todo input={input} setInput={setInput} onAdd={handleAddTodo} />
       <ul>
