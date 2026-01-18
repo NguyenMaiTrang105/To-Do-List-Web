@@ -7,6 +7,7 @@ import "./App.css";
 import Todo from "./Components/Todo";
 import TodoItem from "./Components/TodoItem";
 import Countdown from "./Components/Countdown";
+import notification from "./assets/notification.mp3";
 function App() {
   const [input, setInput] = useState("");
   const [list, setList] = useState(() => {
@@ -15,10 +16,13 @@ function App() {
   const [time, setTime] = useState(1500);
   const [state, setState] = useState(false);
   const [customMinutes, setCustomMinutes] = useState(25);
+  const [priority, setPriority] = useState("medium");
+  const audio = new Audio(notification);
   useEffect(() => {
     if (!state) return;
     if (time === 0) {
       setState(false);
+      audio.play();
       return;
     }
     const id = setInterval(() => {
@@ -45,6 +49,7 @@ function App() {
         id: Date.now(),
         text: input,
         completed: false,
+        priority: priority,
       },
     ]);
     setInput("");
@@ -55,8 +60,8 @@ function App() {
   function handleToggleTodo(id) {
     setList(
       list.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
     );
   }
 
@@ -75,8 +80,14 @@ function App() {
         }}
       />
 
-      <p>Tasks left: {counter}</p>
-      <Todo input={input} setInput={setInput} onAdd={handleAddTodo} />
+      <p className="text">Tasks left: {counter}</p>
+      <Todo
+        input={input}
+        setInput={setInput}
+        onAdd={handleAddTodo}
+        setPriority={setPriority}
+        priority={priority}
+      />
       <ul>
         {list.map((item) => (
           <TodoItem

@@ -1,7 +1,17 @@
+const getColor = (priority) => {
+  if (priority === "high") return "red";
+  if (priority === "medium") return "gold";
+  return "green";
+};
 export default function TodoItem({ todo, onToggle, onDelete }) {
   return (
     <div className="todo-item">
-      <li className="li">
+      <li
+        className="li"
+        style={{
+          borderLeft: `10px solid ${getColor(todo.priority)}`,
+        }}
+      >
         <input
           type="checkbox"
           checked={todo.completed}
